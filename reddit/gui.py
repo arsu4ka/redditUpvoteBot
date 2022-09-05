@@ -2,7 +2,7 @@ import tkinter
 import tkinter.filedialog
 import customtkinter
 import os
-from reddit.connection import run
+from reddit import run
 
 customtkinter.set_appearance_mode("Dark")
 customtkinter.set_default_color_theme("dark-blue")
@@ -10,7 +10,7 @@ customtkinter.set_default_color_theme("dark-blue")
 
 class App(customtkinter.CTk):
 
-    WIDTH = 1050
+    WIDTH = 1200
     HEIGHT = 300
 
     def __init__(self, *args, fg_color="default_theme", **kwargs):
@@ -20,6 +20,7 @@ class App(customtkinter.CTk):
 
         self.fromFile = True
         self.filePath = None
+        self.sleep_range = (5, 10)
 
         # configuring tkinter window
 
@@ -52,6 +53,14 @@ class App(customtkinter.CTk):
         self.linkEntry = customtkinter.CTkEntry(master=self.frame, width=400, placeholder_text="Entry link to reddit post here...")
         self.linkEntry.grid(row=1, column=1, pady=20, padx=20)
 
+        self.sleep_range_entry = customtkinter.CTkEntry(self.frame, width=80)
+        self.sleep_range_entry.grid(row=2, column=0, pady=20, padx=20)
+        self.sleep_range_entry.insert(index=0, string="5:10")
+
+        self.switch_2 = customtkinter.CTkSwitch(master=self.frame,
+                                                text="Upvote")
+        self.switch_2.grid(row=2, column=2, pady=10, padx=0)
+
         self.runBtn = customtkinter.CTkButton(master=self.frame, text="RUN", command=self.on_run)
         self.runBtn.grid(row=2, column=1, pady=30)
 
@@ -59,7 +68,7 @@ class App(customtkinter.CTk):
 
         self.fileLabel = customtkinter.CTkLabel(master=self.frameLeft, text="Get Account From File")
         self.fileBtn = customtkinter.CTkButton(master=self.frameLeft, text="Browse .txt file", command=self.browse_txt)
-        self.addTxtLabel = customtkinter.CTkLabel(master=self.frameLeft, text="username:password:host:port", width=200)
+        self.addTxtLabel = customtkinter.CTkLabel(master=self.frameLeft, text="username:password:host:port:proxy_user:proxy_pass", width=200)
 
         self.fileLabel.pack()
         self.fileBtn.pack()
@@ -76,11 +85,14 @@ class App(customtkinter.CTk):
 
         self.fileLabel = customtkinter.CTkLabel(master=self.frameRight, text="Input Account Credentials")
         self.entry = customtkinter.CTkEntry(master=self.frameRight, width=300)
-        self.addTxtLabel = customtkinter.CTkLabel(master=self.frameRight, text="username:password:host:port")
+        self.addTxtLabel = customtkinter.CTkLabel(master=self.frameRight, text="username:password:host:port:proxy_user:proxy_pass")
 
         self.fileLabel.pack()
         self.entry.pack()
-        self.addTxtLabel.pack()    
+        self.addTxtLabel.pack()   
+
+        self.switch_2.select()
+
         
     def switch_choice(self):
         if self.fromFile:
@@ -96,11 +108,16 @@ class App(customtkinter.CTk):
             data = self.filePath
         else:
             data = self.entry.get()
-        print(data)
+        entry_val = self.sleep_range_entry.get().split(":")
+        start = int(entry_val[0])
+        stop = int(entry_val[1])
+        sleep_range = (start, stop)
         run(
             fromFile=self.fromFile,
             data=data,
-            reddit_post=self.linkEntry.get()
+            reddit_post=self.linkEntry.get(),
+            upvote=self.switch_2.get(),
+            sleep_range=sleep_range
         )
 
     def browse_txt(self):
@@ -114,3 +131,5 @@ class App(customtkinter.CTk):
 
     def on_closing(self, event=0):
         self.destoy()
+
+
