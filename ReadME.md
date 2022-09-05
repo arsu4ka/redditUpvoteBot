@@ -23,7 +23,7 @@ pip install requirements.txt
 Main class is located at
 
 ```bash
-./reddit/reddit_action.py
+./reddit/syncProfile.py
 ```
 
 file.
@@ -37,7 +37,7 @@ python3 manage.py
 or interact directly with the GUI class using
 
 ```python
-from reddit.gui import App
+from reddit import App
 ```
 
 import statement.
@@ -47,7 +47,7 @@ import statement.
 <b> Using RedditProfile class</b>
 
 ```python
-from reddit.reddit_action import RedditProfile
+from reddit import RedditProfile
 
 # creating an instance of RedditProfile class
 profile = RedditProfile(
@@ -66,7 +66,7 @@ profile.upvote(
 <b>Using GUI through App class</b>
 
 ```python
-from reddit.gui import App
+from reddit import App
 
 if __name__ == "__main__":
     app = App()
